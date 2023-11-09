@@ -17,3 +17,8 @@ class Text:
 
     def draw(self, surface):
         surface.blit(self.rendered_text, self.rect)
+
+    def clicked_on_text(self, pos):
+        text_rect = self.rendered_text.get_rect()
+        text_rect.topleft = (self.x, self.y)
+        return text_rect.collidepoint(pos)

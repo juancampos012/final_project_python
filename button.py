@@ -11,11 +11,11 @@ class Button:
         self.color2 = color2
 
     def draw(self, surface):
-        pygame.draw.rect(surface, (255, 255, 255), self.rect)  # Draw button
-        surface.blit(self.image, self.rect)  # Draw button image
-        text_surface = self.font.render(self.text, True, self.get_color())  # Render text
-        text_rect = text_surface.get_rect(center=self.rect.center)  # Center text
-        surface.blit(text_surface, text_rect)  # Draw text
+        pygame.draw.rect(surface, (255, 255, 255), self.rect)  
+        surface.blit(self.image, self.rect) 
+        text_surface = self.font.render(self.text, True, self.get_color())
+        text_rect = text_surface.get_rect(center=self.rect.center) 
+        surface.blit(text_surface, text_rect) 
 
     def get_color(self):
         pos = pygame.mouse.get_pos()

@@ -11,8 +11,10 @@ class BinaryTree:
     def insert(self, value):
         if self.root == None:
             self.root = Node(value)
-        else:
+        elif self.contains(value) is False:
             self.insert_recursive(self.root, value)
+        else:
+            return True
     
     def insert_recursive(self, node, value):
         if value < node.value:
@@ -26,6 +28,19 @@ class BinaryTree:
             else:
                 self.insert_recursive(node.right, value)
     
+    def contains(self, value):
+        return self._contains_recursive(self.root, value)
+
+    def _contains_recursive(self, current, value):
+        if current is None:
+            return False
+        if value == current.value:
+            return True
+        elif value < current.value:
+            return self._contains_recursive(current.left, value)
+        else:
+            return self._contains_recursive(current.right, value)
+
     def delete_tree(self):
         self.delete_tree_recursive(self.root)
         self.root = None
@@ -38,3 +53,63 @@ class BinaryTree:
         self.delete_tree_recursive(node.right)
         node.left = None
         node.right = None
+    
+    def traverse_level_order(self):
+        result = []
+        if self.root is None:
+            return result
+
+        queue = [self.root]
+        current_index = 0
+
+        while current_index < len(queue):
+            current_node = queue[current_index]
+            result.append(current_node.value)
+
+            if current_node.left:
+                queue.append(current_node.left)
+            if current_node.right:
+                queue.append(current_node.right)
+
+            current_index += 1
+
+        return result
+    
+    def traverse_inorder(self):
+        if self.root is None:
+            return
+        result = []
+        self._inorder_recursive(self.root, result)
+        return result
+
+    def _inorder_recursive(self, node, result):
+        if node is not None:
+            self._inorder_recursive(node.left, result)
+            result.append(node.value)
+            self._inorder_recursive(node.right, result)
+    
+    def traverse_postorder(self):
+        if self.root is None:
+            return
+        result = []
+        self._postorder_recursive(self.root, result)
+        return result
+
+    def _postorder_recursive(self, node, result):
+        if node is not None:
+            self._postorder_recursive(node.left, result)
+            self._postorder_recursive(node.right, result)
+            result.append(node.value)
+    
+    def traverse_preorder(self):
+        if self.root is None:
+            return
+        result = []
+        self._preorder_recursive(self.root, result)
+        return result
+
+    def _preorder_recursive(self, node, result):
+        if node is not None:
+            result.append(node.value)
+            self._preorder_recursive(node.left, result)
+            self._preorder_recursive(node.right, result)
