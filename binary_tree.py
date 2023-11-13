@@ -113,3 +113,35 @@ class BinaryTree:
             result.append(node.value)
             self._preorder_recursive(node.left, result)
             self._preorder_recursive(node.right, result)
+    
+    def delete_node(self, root, value):
+        if root is None:
+            return root
+        if value < root.value:
+            root.left = self.delete_node(root.left, value)
+        elif value > root.value:
+            root.right = self.delete_node(root.right, value)
+        else:
+            if root.left is None:
+                temp = root.right
+                root = None
+                return temp
+            elif root.right is None:
+                temp = root.left
+                root = None
+                return temp
+            else:
+                temp = self.find_max(root.left)
+                root.value = temp.value
+                root.left = self.delete_node(root.left, temp.value)
+        return root
+
+    def find_min(self, node):
+        while node.left is not None:
+            node = node.left
+        return node
+
+    def find_max(self, node):
+        while node.right is not None:
+            node = node.right
+        return node
