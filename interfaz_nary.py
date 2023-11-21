@@ -31,8 +31,6 @@ class InterfazNary:
 
         visible_tree = False
         visible_checkbox = False
-        visible_traverse_preorder = False
-        visible_traverse_postorder = False
         visible_traverse_level = False
 
         font = pygame.font.Font(None, 20)
@@ -44,30 +42,33 @@ class InterfazNary:
         input_color = self.WHITE
         cursor_color = self.BLACK
 
-        value_root = TextBox(165, 75, 300, 20, font, text_color, input_color, cursor_color)
-        value_level = TextBox(165, 125, 300, 20, font, text_color, input_color, cursor_color)
-        value_position = TextBox(165, 175, 300, 20, font, text_color, input_color, cursor_color)
-        value_node = TextBox(165, 225, 300, 20, font, text_color, input_color, cursor_color)
+        number_nodess = TextBox(165, 75, 300, 20, font, text_color, input_color, cursor_color)
+        value_root = TextBox(165, 125, 300, 20, font, text_color, input_color, cursor_color)
+        number_children = TextBox(165, 175, 300, 20, font, text_color, input_color, cursor_color)
+        values_children = TextBox(165, 225, 300, 20, font, text_color, input_color, cursor_color)
 
         text_tittle = Text(168, 25, 'Arboles n-arios.', font_tittle, text_color)
-        text_value_root= Text(20, 78, "valor de la raiz:", font, text_color)
-        text_value_level = Text(20, 128, "Nivel:", font, text_color)
-        text_value_position = Text(20, 178, "Poscion:", font, text_color)
-        text_value_node = Text(20, 228, "Valor nodo:", font, text_color)
-        text_profundidad = Text(20, 400, '-Profundidad', font_subtittle, text_color)
+        text_numbers_nodes= Text(20, 78, "Cantidad total:", font, text_color)
+        text_value_root = Text(20, 128, "Valor raiz:", font, text_color)
+        text_number_children = Text(20, 178, "Cantidad hijos", font, text_color)
+        text__values_children = Text(20, 228, "Valor hijos:", font, text_color)
         text_amplitude = Text(20, 370, '-Amplitud', font_subtittle, text_color)
         text_recorrido = Text(20, 330, 'Recorrido', font_subtittle2, text_color)
-        text_values_traverse = Text(20, 550, '', font, text_color)
+        text_values_traverse = Text(20, 440, '', font, text_color)
 
-        checkbox_preorden = Checkbox(50, 430, 20, 20, "Preorden", font, self.BLACK)
-        checkbox_postorden = Checkbox(50, 460, 20, 20, "Postorden", font, self.BLACK)
+        checkbox_level = Checkbox(40, 400, 20, 20, "Amplitud", font, self.BLACK)
 
         button_add_node = Button(190, 265, 'images/buttonf.jpeg', 'Anadir nodo', 27, self.WHITE, (220,220,220))
 
-        alert_values_r = Alert('Los campos diferentes de la raiz deben de estar vacios.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
-        alert_root_value = Alert('Ingresa un valor valido para la raiz.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_positive_numbers = Alert('Solo se pueden ingresar numeros positivos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_values = Alert('Ingresa valores validos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_position = Alert('Posicion no econntrada.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_nary_tree = Alert('El arbol no puede estar vacio.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_number_node= Alert('Numero de nodos no valido.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_nsearch = Alert('Nodo no encontrado.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_negative_number = Alert('No pueden haber numeros negativos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_max_num = Alert('' ,font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_cant_numbers = Alert('Cantidad de nodos no coinciden con los valores ingresados.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
 
         running = True
         while running:
@@ -83,67 +84,75 @@ class InterfazNary:
                     elif click_area.collidepoint(event.pos):
                         webbrowser.open(url)
                     elif button_add_node.is_clicked():
-                        if self.nary_treee.root == None:
-                            if not value_level.information_text() and not value_position.information_text() and not value_node.information_text():
-                                try: 
-                                    self.nary_treee.add_root(int(value_root.information_text()))
-                                    visible_tree = True
-                                except ValueError:
-                                    alert_root_value.tiempo_mostrado = pygame.time.get_ticks()
-                                    alert_root_value.mostrar_alerta = True
-                            else:
-                                alert_values_r.tiempo_mostrado = pygame.time.get_ticks()
-                                alert_values_r.mostrar_alerta = True 
-                        else:
-                            try:
-                                aux = self.nary_treee.add_node(int(value_level.information_text()), int(value_position.information_text()), int(value_node.information_text()))
-                                if aux is True:
-                                    visible_tree = True
+                        try:
+                            number_nodes_int = int(number_nodess.information_text())
+                            if number_nodes_int <= 20 and number_nodes_int > 1: 
+                                root_int = int(value_root.information_text())
+                                if root_int > 0:
+                                    number_children_int = int(number_children.information_text())
+                                    if number_children_int > 0 and number_children_int < 20:
+                                        values_children_arr =  values_children.information_text().split(',')
+                                        values_children_arr_int = [int(x) for x in values_children_arr]
+                                        if number_children_int  == len(values_children_arr):
+                                            auxx = number_children_int + self.nary_treee.length
+                                            if auxx < number_nodes_int:
+                                                if all(num > 0 for num in values_children_arr_int):
+                                                    aux_bool = self.nary_treee.add_node(root_int, values_children_arr_int)
+                                                    if aux_bool is False:
+                                                        alert_nsearch.tiempo_mostrado = pygame.time.get_ticks()
+                                                        alert_nsearch.mostrar_alerta = True
+                                                    visible_tree = True
+                                                else:
+                                                    alert_negative_number.tiempo_mostrado = pygame.time.get_ticks()
+                                                    alert_negative_number.mostrar_alerta = True
+                                            else:
+                                                aux = (auxx - number_nodes_int)+1
+                                                aux_text = 'Cantidadad de nodos esta incorrecta por '+str(aux)+' valores'
+                                                alert_max_num.mensaje = aux_text
+                                                alert_max_num.tiempo_mostrado = pygame.time.get_ticks()
+                                                alert_max_num.mostrar_alerta = True
+                                    elif number_children_int == 0:
+                                        root_int = int(value_root.information_text())
+                                        arr = []
+                                        if root_int > 0:
+                                            self.nary_treee.add_node(root_int, arr)
+                                            visible_tree = True
+                                    else:
+                                        alert_cant_numbers.tiempo_mostrado = pygame.time.get_ticks()
+                                        alert_cant_numbers.mostrar_alerta = True
                                 else:
-                                    alert_position.tiempo_mostrado = pygame.time.get_ticks()
-                                    alert_position.mostrar_alerta = True
-                            except ValueError:
-                                alert_values.tiempo_mostrado = pygame.time.get_ticks()
-                                alert_values.mostrar_alerta = True
-                    if text_amplitude.clicked_on_text(event.pos) == True and self.nary_treee.root is not None:
-                        traverse_tree = self.nary_treee.level_order()
-                        numbers = ', '.join(map(str, traverse_tree))
-                        text_values_traverse.set_text(numbers)
-                        visible_traverse_level = True
-                    if text_profundidad.clicked_on_text(event.pos) == True and visible_checkbox == False:
-                        visible_checkbox = True
-                    elif text_profundidad.clicked_on_text(event.pos) == True and visible_checkbox == True:
-                        visible_checkbox = False
-                    if visible_checkbox == True and self.nary_treee.root is not None:
-                        checkbox_postorden.handle_event(event)
-                        checkbox_preorden.handle_event(event)
-                        if checkbox_preorden.checked == True:
-                            checkbox_postorden.checked = False
-                            traverse_tree = self.nary_treee.preorder()
-                            numbers = ', '.join(map(str, traverse_tree))
-                            text_values_traverse.set_text(numbers)
-                            visible_traverse_preorder = True
-                        elif checkbox_postorden.checked == True:
-                            checkbox_preorden.checked = False
-                            traverse_tree = self.nary_treee.postorder()
-                            numbers = ', '.join(map(str, traverse_tree))
-                            text_values_traverse.set_text(numbers)
-                            visible_traverse_postorder = True
-                        if checkbox_postorden.checked == False:
-                            visible_traverse_postorder = False
-                            visible_traverse_level = False
-                        if checkbox_preorden.checked == False:
-                            visible_traverse_preorder = False
-                            visible_traverse_level = False
-                value_root.handle_event(event)
-                value_level.handle_event(event)
-                value_node.handle_event(event)
-                value_position.handle_event(event)
+                                    alert_positive_numbers.tiempo_mostrado = pygame.time.get_ticks()
+                                    alert_positive_numbers.mostrar_alerta = True
+                            elif number_nodes_int == 1:
+                                root_int = int(value_root.information_text())
+                                if root_int > 0:
+                                    self.nary_treee.add_root(root_int)
+                                    visible_tree = True
+                            else:
+                                alert_number_node.tiempo_mostrado = pygame.time.get_ticks()
+                                alert_number_node.mostrar_alerta = True
+                        except ValueError:
+                            alert_values.tiempo_mostrado = pygame.time.get_ticks()
+                            alert_values.mostrar_alerta = True
+                if checkbox_level.checked is True and self.nary_treee.root is not None:
+                    traverse_tree = self.nary_treee.level_order()
+                    numbers = 'Recorrido: '+', '.join(map(str, traverse_tree))
+                    text_values_traverse.set_text(numbers)
+                    visible_traverse_level = True
+                else:
+                    visible_traverse_level = False
 
-            value_node.update()
-            value_position.update()
+                if self.nary_treee.root is None:
+                    number_nodess.handle_event(event)
+
+                checkbox_level.handle_event(event)
+                value_root.handle_event(event)
+                number_children.handle_event(event)
+                values_children.handle_event(event)
+
             value_root.update()
-            value_level.update()
+            number_children.update()
+            values_children.update()
 
             self.screen.blit(fondo, (0,0))
             pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(0, screen_height-25, screen_width, 25))
@@ -152,34 +161,37 @@ class InterfazNary:
             button_add_node.draw(self.screen)
 
             text_tittle.draw(self.screen)
-            text_value_level.draw(self.screen)
-            text_value_position.draw(self.screen)
-            text_value_node.draw(self.screen)
+            text__values_children.draw(self.screen)
+            text_number_children.draw(self.screen)
             text_value_root.draw(self.screen)
-            text_profundidad.draw(self.screen)
+            text_numbers_nodes.draw(self.screen)
             text_amplitude.draw(self.screen)
             text_recorrido.draw(self.screen)
 
+            number_nodess.draw(self.screen)
+            values_children.draw(self.screen)
             value_root.draw(self.screen)
-            value_level.draw(self.screen)
-            value_node.draw(self.screen)
-            value_position.draw(self.screen)
+            number_children.draw(self.screen)
 
             self.screen.blit(icon_git, (610, 775))
             text_git.draw(self.screen)
 
-            alert_values_r.draw(self.screen)
-            alert_root_value.draw(self.screen)
+            alert_positive_numbers.draw(self.screen)
             alert_values.draw(self.screen)
             alert_position.draw(self.screen)
+            alert_nary_tree.draw(self.screen)
+            alert_number_node.draw(self.screen)
+            alert_cant_numbers.draw(self.screen)
+            alert_negative_number.draw(self.screen)
+            alert_max_num.draw(self.screen)
+            alert_nsearch.draw(self.screen)
 
-            if visible_tree == True:
+            checkbox_level.draw(self.screen)
+
+            if visible_tree is True:
                 self.draw_ntree(self.nary_treee.root, 900, 50, 800, self.screen, 15)
-            if visible_checkbox == True:
-                checkbox_preorden.draw(self.screen)
-                checkbox_postorden.draw(self.screen)
             
-            if visible_traverse_level is True or visible_traverse_postorder is True or visible_traverse_preorder is True:
+            if visible_traverse_level is True:
                 text_values_traverse.draw(self.screen)
             pygame.display.update()
 
@@ -193,12 +205,12 @@ class InterfazNary:
         ))
     
     def draw_ntree(self, node, x, y, width, screen, aux):
-        # Dibuja el nodo actual
-        pygame.draw.circle(screen, self.BLACK, (x, y), 20)
-        font = pygame.font.Font(None, 36)
-        text = font.render(str(node.value), True, self.WHITE)
-        text_rect = text.get_rect(center=(x, y))
-        screen.blit(text, text_rect)
+        if node.value is not None:
+            pygame.draw.circle(screen, self.BLACK, (x, y), 20)
+            font = pygame.font.Font(None, 36)
+            text = font.render(str(node.value), True, self.WHITE)
+            text_rect = text.get_rect(center=(x, y))
+            screen.blit(text, text_rect)
 
         # Calcula la posición de los hijos
         num_children = len(node.children)
@@ -211,6 +223,7 @@ class InterfazNary:
 
         # Dibuja los hijos
         for child in node.children:
-            self.draw_arrow_line(screen, self.BLACK, (x, y + 20), (child_x, child_y-23), 10)
+            if child.value is not None:
+                self.draw_arrow_line(screen, self.BLACK, (x, y + 20), (child_x, child_y-23), 10)
             self.draw_ntree(child, child_x, child_y, child_width, screen, aux)
             child_x += child_width

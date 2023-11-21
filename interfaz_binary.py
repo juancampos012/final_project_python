@@ -30,13 +30,10 @@ class InterfazBinary:
         url = 'https://github.com/juancampos012/final_project_python'
 
         visible_tree = False
-        visible_checkbox = False
-        visible_traverse_inorder = False
-        visible_traverse_preorder = False
-        visible_traverse_postorder = False
-        visible_traverse_level = False
-
-        traverse_tree = []
+        visible_traverse_amplitud = False
+        visible_traverse_inorden = False
+        visible_traverse_preorden = False
+        visible_traverse_postorden = False
 
         font = pygame.font.Font(None, 20)
         font_tittle = pygame.font.Font(None,35)
@@ -57,20 +54,25 @@ class InterfazBinary:
         text2 = Text(20, 128, "valores:", font, text_color)
         text3 = Text(20, 173, "Raiz:", font, text_color)
         text_profundidad = Text(20, 400, '-Profundidad', font_subtittle, text_color)
-        text_amplitude = Text(20, 370, '-Amplitud', font_subtittle, text_color)
-        text_recorrido = Text(20, 330, 'Recorrido', font_subtittle2, text_color)
-        text_values_traverse = Text(20, 550, '', font, text_color)
+        text_amplitude = Text(20, 330, '-Amplitud', font_subtittle, text_color)
+        text_recorrido = Text(20, 300, 'Recorrido', font_subtittle2, text_color)
+        text_values_traverse_amplitud = Text(20, 530, '', font, text_color)
+        text_values_traverse_inorden = Text(20, 560, '', font, text_color)
+        text_values_traverse_preorden = Text(20, 590, '', font, text_color)
+        text_values_traverse_postorden= Text(20, 620, '', font, text_color)
 
         checkbox_inorden = Checkbox(50, 430, 20, 20, "Inorden", font, self.BLACK)
         checkbox_preorden = Checkbox(50, 460, 20, 20, "Preorden", font, self.BLACK)
         checkbox_postorden = Checkbox(50, 490, 20, 20, "Postorden", font, self.BLACK)
+        checkbox_amplitud = Checkbox(50, 360, 20, 20, "Amplitud", font, self.BLACK)
 
-        alert_cant_numbers = Alert('Cantidad de nodos no coinciden con los valores ingresados.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_cant_numbers = Alert('', font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_root = Alert('Ingresa un valor valido para la raiz.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_number_nodes = Alert('Ingresa un numero de nodos valido.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_cant_ivalid = Alert('Cantidad de nodos no esta dentro del limite 0-20.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_only_root = Alert('Quita los valores de la casilla de valores.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_repeat_number = Alert('No pueden haber numeros repetidos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
+        alert_negative_number = Alert('No pueden haber numeros negativos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
 
         running = True
         while running:
@@ -96,32 +98,43 @@ class InterfazBinary:
                                 if numbers_nodes_int != 1:
                                     separate_values = [int(x) for x in separate_information_values]
                                     if numbers_nodes_int <= 20 and numbers_nodes_int > 0:
-                                        if numbers_nodes_int-1 ==  len(separate_values):
-                                            aux = self.create_binary_tree(value_root_int, separate_values)
-                                            if visible_tree == True:
-                                                self.binary_treee.delete_tree()
-                                                visible_tree = False
+                                        if len(separate_values) == len(set(separate_values)):
+                                            if all(num > 0 for num in separate_values) and value_root_int > 0:
+                                                if numbers_nodes_int - 1 ==  len(separate_values):
+                                                    self.create_binary_tree(value_root_int, separate_values)
+                                                    if visible_tree == True:
+                                                        self.binary_treee.delete_tree()
+                                                        visible_tree = False
+                                                    else:
+                                                        visible_tree = True
+                                                else:
+                                                    aux = len(separate_values) - numbers_nodes_int + 1
+                                                    aux_text = 'Cantidadad de nodos esta incorrecta por '+str(aux)+' valores'
+                                                    alert_cant_numbers.mensaje = aux_text
+                                                    alert_cant_numbers.tiempo_mostrado = pygame.time.get_ticks()
+                                                    alert_cant_numbers.mostrar_alerta = True 
                                             else:
-                                                visible_tree = True
-                                            if aux == True and visible_tree is True:
-                                                self.binary_treee.delete_tree()
-                                                alert_repeat_number.tiempo_mostrado = pygame.time.get_ticks()
-                                                alert_repeat_number.mostrar_alerta = True 
+                                                alert_negative_number.tiempo_mostrado = pygame.time.get_ticks()
+                                                alert_negative_number.mostrar_alerta = True
                                         else:
-                                            alert_cant_numbers.tiempo_mostrado = pygame.time.get_ticks()
-                                            alert_cant_numbers.mostrar_alerta = True 
+                                            alert_repeat_number.tiempo_mostrado = pygame.time.get_ticks()
+                                            alert_repeat_number.mostrar_alerta = True 
                                     else:
                                         alert_cant_ivalid.tiempo_mostrado = pygame.time.get_ticks()
                                         alert_cant_ivalid.mostrar_alerta = True 
                                 elif numbers_nodes_int == 1:
                                     information_values = values.information_text()
                                     if not information_values:
-                                        self.create_binary_tree_one_node(value_root_int)
-                                        if visible_tree == True:
-                                            self.binary_treee.delete_tree()
-                                            visible_tree = False
+                                        if value_root_int > 0:
+                                            self.create_binary_tree_one_node(value_root_int)
+                                            if visible_tree == True:
+                                                self.binary_treee.delete_tree()
+                                                visible_tree = False
+                                            else:
+                                                visible_tree = True
                                         else:
-                                            visible_tree = True
+                                            alert_negative_number.tiempo_mostrado = pygame.time.get_ticks()
+                                            alert_negative_number.mostrar_alerta = True
                                     else:
                                         alert_only_root.tiempo_mostrado = pygame.time.get_ticks()
                                         alert_only_root.mostrar_alerta = True
@@ -131,49 +144,39 @@ class InterfazBinary:
                         except ValueError:
                             alert_root.tiempo_mostrado = pygame.time.get_ticks()
                             alert_root.mostrar_alerta = True 
-                    if text_amplitude.clicked_on_text(event.pos) == True and self.binary_treee.root is not None:
-                        traverse_tree = self.binary_treee.traverse_level_order()
-                        numbers = ', '.join(map(str, traverse_tree))
-                        text_values_traverse.set_text(numbers)
-                        visible_traverse_level = True
-                    if text_profundidad.clicked_on_text(event.pos) == True and visible_checkbox == False:
-                        visible_checkbox = True
-                    elif text_profundidad.clicked_on_text(event.pos) == True and visible_checkbox == True:
-                        visible_checkbox = False
-                    if visible_checkbox == True and self.binary_treee.root is not None:
+                    if visible_tree is True:
+                        checkbox_amplitud.handle_event(event)
                         checkbox_inorden.handle_event(event)
                         checkbox_postorden.handle_event(event)
                         checkbox_preorden.handle_event(event)
-                        if checkbox_inorden.checked == True :
-                            checkbox_preorden.checked = False
-                            checkbox_postorden.checked = False
-                            traverse_tree = self.binary_treee.traverse_inorder()
-                            numbers = ', '.join(map(str, traverse_tree))
-                            text_values_traverse.set_text(numbers)
-                            visible_traverse_inorder = True
-                        elif checkbox_preorden.checked == True:
-                            checkbox_inorden.checked = False
-                            checkbox_postorden.checked = False
-                            traverse_tree = self.binary_treee.traverse_preorder()
-                            numbers = ', '.join(map(str, traverse_tree))
-                            text_values_traverse.set_text(numbers)
-                            visible_traverse_preorder = True
-                        elif checkbox_postorden.checked == True:
-                            checkbox_inorden.checked = False
-                            checkbox_preorden.checked = False
-                            traverse_tree = self.binary_treee.traverse_postorder()
-                            numbers = ', '.join(map(str, traverse_tree))
-                            text_values_traverse.set_text(numbers)
-                            visible_traverse_postorder = True
-                        if checkbox_postorden.checked == False:
-                            visible_traverse_postorder = False
-                            visible_traverse_level = False
-                        if checkbox_inorden.checked == False:
-                            visible_traverse_inorder = False
-                            visible_traverse_level = False
-                        if checkbox_preorden.checked == False:
-                            visible_traverse_preorder = False
-                            visible_traverse_level = False
+                if checkbox_amplitud.checked is True and self.binary_treee.root is not None:
+                    traverse_tree = self.binary_treee.traverse_level_order()
+                    numbers = 'Amplitud: '+', '.join(map(str, traverse_tree))
+                    text_values_traverse_amplitud.set_text(numbers)
+                    visible_traverse_amplitud = True
+                else:
+                    visible_traverse_amplitud = False
+                if checkbox_inorden.checked is True and self.binary_treee.root is not None:
+                    traverse_tree = self.binary_treee.traverse_inorder()
+                    numbers = 'Inorden: '+', '.join(map(str, traverse_tree))
+                    text_values_traverse_inorden.set_text(numbers)
+                    visible_traverse_inorden = True
+                else:
+                    visible_traverse_inorden = False
+                if checkbox_postorden.checked is True and self.binary_treee.root is not None:
+                    traverse_tree = self.binary_treee.traverse_postorder()
+                    numbers = 'Postorden: '+', '.join(map(str, traverse_tree))
+                    text_values_traverse_postorden.set_text(numbers)
+                    visible_traverse_postorden = True
+                else:
+                    visible_traverse_postorden = False
+                if checkbox_preorden.checked is True and self.binary_treee.root is not None:
+                    traverse_tree = self.binary_treee.traverse_preorder()
+                    numbers = 'Preorden: '+', '.join(map(str, traverse_tree))
+                    text_values_traverse_preorden.set_text(numbers)
+                    visible_traverse_preorden = True
+                else:
+                    visible_traverse_preorden = False
                 numbers_nodes.handle_event(event)
                 values.handle_event(event)
                 value_root.handle_event(event)
@@ -203,21 +206,27 @@ class InterfazBinary:
             button_home.draw(self.screen)
 
             self.draw_tree(self.binary_treee.root, 900, 50, 1, 800 // 2, 15)
-            if visible_checkbox == True:
-                checkbox_preorden.draw(self.screen)
-                checkbox_inorden.draw(self.screen)
-                checkbox_postorden.draw(self.screen)
-            if visible_traverse_postorder == True or visible_traverse_inorder == True or visible_traverse_preorder == True or visible_traverse_level == True:
-                text_values_traverse.draw(self.screen)
+            checkbox_preorden.draw(self.screen)
+            checkbox_inorden.draw(self.screen)
+            checkbox_postorden.draw(self.screen)
 
-            if visible_tree is False:
-                visible_traverse_level  = False
+            checkbox_amplitud.draw(self.screen)
             alert_cant_numbers.draw(self.screen)
             alert_number_nodes.draw(self.screen)
             alert_root.draw(self.screen)
             alert_cant_ivalid.draw(self.screen)
             alert_repeat_number.draw(self.screen)
+            alert_negative_number.draw(self.screen)
             alert_only_root.draw(self.screen)
+
+            if visible_traverse_amplitud == True:
+                text_values_traverse_amplitud.draw(self.screen)
+            if visible_traverse_inorden == True:
+                text_values_traverse_inorden.draw(self.screen)
+            if visible_traverse_postorden == True:
+                text_values_traverse_postorden.draw(self.screen)
+            if visible_traverse_preorden == True:
+                text_values_traverse_preorden.draw(self.screen)
             pygame.display.update()
 
     def create_binary_tree_one_node(self, value_root):

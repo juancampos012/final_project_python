@@ -1,4 +1,4 @@
-from interfaz import Interfaz
+from interfaz_principal import Interfaz
 
 inst_interfaz = Interfaz()
 

@@ -6,48 +6,47 @@ class NaryNode:
 class NaryTree:
     def __init__(self):
         self.root = None
+        self.length = 0
 
     def add_root(self, value):
         self.root = NaryNode(value)
-        print("Added root")
+        self.length += 1
+        return True
 
-    def add_node(self, nivel, pocision, value):
-        node_parent = self.search_by_level_and_position(self.root, nivel, pocision)
+    def add_node(self, value, values):
+        if self.root is None:
+            self.root = NaryNode(value)
+            node_parent = self.root
+        else:
+            node_parent = self.buscar_nodo_sin_hijos(self.root, value)
         if node_parent:
-            new_node = NaryNode(value)
-            node_parent.children.append(new_node)
-            return True
+            if len(values) == 0:
+                node = NaryNode(None)
+                node_parent.children.append(node)
+                return True
+            else:
+                for x in range(0,len(values)):
+                    new_node = NaryNode(values[x])
+                    node_parent.children.append(new_node)
+                    self.length += 1
+                return True
         else:
             return False
 
-    def search_by_level_and_position(self, root, level, position):
-        if level == 1 and position == 1:
-            return root
+    def buscar_nodo_sin_hijos(self, root, value):
+        # Verificar si la raíz es None o si el valor coincide
         if root is None:
             return None
-        queue = []
-        queue.append(root)
-        current_level = 1
-        while len(queue) > 0:
-            size = len(queue)
-            for i in range(size):
-                node = queue.pop(0)
-                if current_level == level and i+1 == position:
-                    return node
-                for child in node.children:
-                    queue.append(child)
-            current_level += 1
-        return None
-
-    def _buscar_nodo(self, node, value):
-        if node.value == value:
-            return node
-
-        for hijo in node.children:
-            node_search = self._buscar_nodo(hijo, value)
-            if node_search:
-                return node_search
-
+        if root.value == value:
+            # Verificar si la raíz no tiene hijos
+            if not root.children:
+                return root
+        # Buscar en los hijos recursivamente
+        for hijo in root.children:
+            resultado = self.buscar_nodo_sin_hijos(hijo, value)
+            if resultado is not None:
+                return resultado
+        # Si no se encuentra el valor en el subárbol
         return None
 
     def preorder(self, node=None):
@@ -87,7 +86,8 @@ class NaryTree:
 
         while queue:
             current_node = queue.pop(0)
-            result.append(current_node.value)
+            if current_node.value is not None:
+                result.append(current_node.value)
             queue.extend(current_node.children)
 
         return result
