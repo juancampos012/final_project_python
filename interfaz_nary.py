@@ -46,19 +46,25 @@ class InterfazNary:
         value_root = TextBox(165, 125, 300, 20, font, text_color, input_color, cursor_color)
         number_children = TextBox(165, 175, 300, 20, font, text_color, input_color, cursor_color)
         values_children = TextBox(165, 225, 300, 20, font, text_color, input_color, cursor_color)
+        value_node_delete = TextBox(165, 275, 300, 20, font, text_color, input_color, cursor_color)
+        value_node_delete_all = TextBox(165, 325, 300, 20, font, text_color, input_color, cursor_color)
 
         text_tittle = Text(168, 25, 'Arboles n-arios.', font_tittle, text_color)
         text_numbers_nodes= Text(20, 78, "Cantidad total:", font, text_color)
         text_value_root = Text(20, 128, "Valor raiz:", font, text_color)
         text_number_children = Text(20, 178, "Cantidad hijos", font, text_color)
         text__values_children = Text(20, 228, "Valor hijos:", font, text_color)
-        text_amplitude = Text(20, 370, '-Amplitud', font_subtittle, text_color)
-        text_recorrido = Text(20, 330, 'Recorrido', font_subtittle2, text_color)
-        text_values_traverse = Text(20, 440, '', font, text_color)
+        text__value_node_delete = Text(20, 278, "Valor eliminar:", font, text_color)
+        text__value_node_delete_all = Text(20, 328, "Valor eliminar todos:", font, text_color)
+        text_amplitude = Text(20, 490, '-Amplitud', font_subtittle, text_color)
+        text_recorrido = Text(20, 450, 'Recorrido', font_subtittle2, text_color)
+        text_values_traverse = Text(20, 520, '', font, text_color)
 
-        checkbox_level = Checkbox(40, 400, 20, 20, "Amplitud", font, self.BLACK)
+        checkbox_level = Checkbox(40, 520, 20, 20, "Amplitud", font, self.BLACK)
 
-        button_add_node = Button(190, 265, 'images/buttonf.jpeg', 'Anadir nodo', 27, self.WHITE, (220,220,220))
+        button_add_node = Button(20, 375, 'images/buttonf.jpeg', 'Anadir nodo', 27, self.WHITE, (220,220,220))
+        button_delete_node = Button(180, 375, 'images/buttonf.jpeg', 'Eliminar nodo', 27, self.WHITE, (220,220,220))
+        button_delete_node_all = Button(340, 375, 'images/buttonf.jpeg', 'Eliminar todos', 27, self.WHITE, (220,220,220))
 
         alert_positive_numbers = Alert('Solo se pueden ingresar numeros positivos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_values = Alert('Ingresa valores validos.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
@@ -83,6 +89,29 @@ class InterfazNary:
                         self.nary_treee.delete_nary_tree()
                     elif click_area.collidepoint(event.pos):
                         webbrowser.open(url)
+                    elif button_delete_node_all.is_clicked():
+                        try:
+                            value_node_delete_all_int = int(value_node_delete_all.information_text())
+                            aux_boolean_delete_all = self.nary_treee.eliminar_nodo(value_node_delete_all_int)
+                            if aux_boolean_delete_all is False:
+                                alert_nsearch.tiempo_mostrado = pygame.time.get_ticks()
+                                alert_nsearch.mostrar_alerta = True
+                            while aux_boolean_delete_all:
+                                aux_boolean_delete_all = self.nary_treee.eliminar_nodo(value_node_delete_all_int)
+                        except ValueError:
+                            alert_values.tiempo_mostrado = pygame.time.get_ticks()
+                            alert_values.mostrar_alerta = True
+                    elif button_delete_node.is_clicked():
+                        try:
+                            value_node_delete_int = int(value_node_delete.information_text())
+                            aux_boolean_delete = self.nary_treee.eliminar_nodo(value_node_delete_int)
+                            visible_tree = True
+                            if aux_boolean_delete is False:
+                                alert_nsearch.tiempo_mostrado = pygame.time.get_ticks()
+                                alert_nsearch.mostrar_alerta = True
+                        except ValueError:
+                            alert_values.tiempo_mostrado = pygame.time.get_ticks()
+                            alert_values.mostrar_alerta = True
                     elif button_add_node.is_clicked():
                         try:
                             number_nodes_int = int(number_nodess.information_text())
@@ -95,6 +124,7 @@ class InterfazNary:
                                         values_children_arr_int = [int(x) for x in values_children_arr]
                                         if number_children_int  == len(values_children_arr):
                                             auxx = number_children_int + self.nary_treee.length
+                                            print(auxx, number_nodes_int)
                                             if auxx < number_nodes_int:
                                                 if all(num > 0 for num in values_children_arr_int):
                                                     aux_bool = self.nary_treee.add_node(root_int, values_children_arr_int)
@@ -149,16 +179,22 @@ class InterfazNary:
                 value_root.handle_event(event)
                 number_children.handle_event(event)
                 values_children.handle_event(event)
+                value_node_delete.handle_event(event)
+                value_node_delete_all.handle_event(event)
 
             value_root.update()
             number_children.update()
             values_children.update()
+            value_node_delete.update()
+            value_node_delete_all.update()
 
             self.screen.blit(fondo, (0,0))
             pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(0, screen_height-25, screen_width, 25))
 
             button_home.draw(self.screen)
             button_add_node.draw(self.screen)
+            button_delete_node.draw(self.screen)
+            button_delete_node_all.draw(self.screen)
 
             text_tittle.draw(self.screen)
             text__values_children.draw(self.screen)
@@ -167,11 +203,15 @@ class InterfazNary:
             text_numbers_nodes.draw(self.screen)
             text_amplitude.draw(self.screen)
             text_recorrido.draw(self.screen)
+            text__value_node_delete.draw(self.screen)
+            text__value_node_delete_all.draw(self.screen)
 
             number_nodess.draw(self.screen)
             values_children.draw(self.screen)
             value_root.draw(self.screen)
             number_children.draw(self.screen)
+            value_node_delete.draw(self.screen)
+            value_node_delete_all.draw(self.screen)
 
             self.screen.blit(icon_git, (610, 775))
             text_git.draw(self.screen)

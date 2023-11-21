@@ -43,28 +43,31 @@ class InterfazBinary:
         input_color = self.WHITE
         cursor_color = self.BLACK
 
-        button_create_binary_tree = Button(190, 215, 'images/buttonf.jpeg', 'Generar Arbol', 27, self.WHITE, (220,220,220))
+        button_create_binary_tree = Button(70, 265, 'images/buttonf.jpeg', 'Generar Arbol', 27, self.WHITE, (220,220,220))
+        button_delete_node = Button(240, 265, 'images/buttonf.jpeg', 'Eliminar nodo', 27, self.WHITE, (220,220,220))
 
         numbers_nodes = TextBox(165, 75, 300, 20, font, text_color, input_color, cursor_color)
         values = TextBox(165, 125, 300, 20, font, text_color, input_color, cursor_color)
         value_root = TextBox(165, 175, 300, 20, font, text_color, input_color, cursor_color)
+        value_node_delete = TextBox(165, 225, 300, 20, font, text_color, input_color, cursor_color)
 
         text_tittle = Text(168, 25, 'Arboles binarios.', font_tittle, text_color)
         text1 = Text(20, 78, "Cantidad de nodos:", font, text_color)
         text2 = Text(20, 128, "valores:", font, text_color)
-        text3 = Text(20, 173, "Raiz:", font, text_color)
-        text_profundidad = Text(20, 400, '-Profundidad', font_subtittle, text_color)
-        text_amplitude = Text(20, 330, '-Amplitud', font_subtittle, text_color)
-        text_recorrido = Text(20, 300, 'Recorrido', font_subtittle2, text_color)
-        text_values_traverse_amplitud = Text(20, 530, '', font, text_color)
-        text_values_traverse_inorden = Text(20, 560, '', font, text_color)
-        text_values_traverse_preorden = Text(20, 590, '', font, text_color)
-        text_values_traverse_postorden= Text(20, 620, '', font, text_color)
+        text3 = Text(20, 178, "Raiz:", font, text_color)
+        text_profundidad = Text(20, 430, '-Profundidad', font_subtittle, text_color)
+        text_amplitude = Text(20, 380, '-Amplitud', font_subtittle, text_color)
+        text_recorrido = Text(20, 350, 'Recorrido', font_subtittle2, text_color)
+        text_values_traverse_amplitud = Text(20, 560, '', font, text_color)
+        text_values_traverse_inorden = Text(20, 590, '', font, text_color)
+        text_values_traverse_preorden = Text(20, 620, '', font, text_color)
+        text_values_traverse_postorden = Text(20, 650, '', font, text_color)
+        text_value_delete = Text(20, 228, 'Valor nodo eliminar:', font, text_color)
 
-        checkbox_inorden = Checkbox(50, 430, 20, 20, "Inorden", font, self.BLACK)
-        checkbox_preorden = Checkbox(50, 460, 20, 20, "Preorden", font, self.BLACK)
-        checkbox_postorden = Checkbox(50, 490, 20, 20, "Postorden", font, self.BLACK)
-        checkbox_amplitud = Checkbox(50, 360, 20, 20, "Amplitud", font, self.BLACK)
+        checkbox_inorden = Checkbox(50, 460, 20, 20, "Inorden", font, self.BLACK)
+        checkbox_preorden = Checkbox(50, 490, 20, 20, "Preorden", font, self.BLACK)
+        checkbox_postorden = Checkbox(50, 520, 20, 20, "Postorden", font, self.BLACK)
+        checkbox_amplitud = Checkbox(50, 405, 20, 20, "Amplitud", font, self.BLACK)
 
         alert_cant_numbers = Alert('', font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
         alert_root = Alert('Ingresa un valor valido para la raiz.',font_subtittle, (255,0,0), self.WHITE, screen_width//2, screen_height//2, 3000)
@@ -86,6 +89,14 @@ class InterfazBinary:
                     if button_home.is_clicked():
                         running = False
                         self.binary_treee.delete_tree()
+                    elif button_delete_node.is_clicked():
+                        try:
+                            value_node_delete_int = int(value_node_delete.information_text())
+                            self.binary_treee.delete_node_recursive(value_node_delete_int)
+                            visible_tree = True
+                        except ValueError:
+                            alert_number_nodes.tiempo_mostrado = pygame.time.get_ticks()
+                            alert_number_nodes.mostrar_alerta = True 
                     elif button_create_binary_tree.is_clicked():
                         information_numbers_nodes = numbers_nodes.information_text()
                         information_values = values.information_text()
@@ -97,28 +108,25 @@ class InterfazBinary:
                                 numbers_nodes_int = int(information_numbers_nodes) 
                                 if numbers_nodes_int != 1:
                                     separate_values = [int(x) for x in separate_information_values]
+                                    separate_values_all = self.eliminar_repetidos(separate_values)
                                     if numbers_nodes_int <= 20 and numbers_nodes_int > 0:
-                                        if len(separate_values) == len(set(separate_values)):
-                                            if all(num > 0 for num in separate_values) and value_root_int > 0:
-                                                if numbers_nodes_int - 1 ==  len(separate_values):
-                                                    self.create_binary_tree(value_root_int, separate_values)
-                                                    if visible_tree == True:
-                                                        self.binary_treee.delete_tree()
-                                                        visible_tree = False
-                                                    else:
-                                                        visible_tree = True
+                                        if all(num > 0 for num in separate_values_all) and value_root_int > 0:
+                                            if numbers_nodes_int - 1 ==  len(separate_values_all):
+                                                self.create_binary_tree(value_root_int, separate_values_all)
+                                                if visible_tree == True:
+                                                    self.binary_treee.delete_tree()
+                                                    visible_tree = False
                                                 else:
-                                                    aux = len(separate_values) - numbers_nodes_int + 1
-                                                    aux_text = 'Cantidadad de nodos esta incorrecta por '+str(aux)+' valores'
-                                                    alert_cant_numbers.mensaje = aux_text
-                                                    alert_cant_numbers.tiempo_mostrado = pygame.time.get_ticks()
-                                                    alert_cant_numbers.mostrar_alerta = True 
+                                                    visible_tree = True
                                             else:
-                                                alert_negative_number.tiempo_mostrado = pygame.time.get_ticks()
-                                                alert_negative_number.mostrar_alerta = True
+                                                aux = len(separate_values_all) - numbers_nodes_int + 1
+                                                aux_text = 'Cantidadad de nodos esta incorrecta por '+str(aux)+' valores'
+                                                alert_cant_numbers.mensaje = aux_text
+                                                alert_cant_numbers.tiempo_mostrado = pygame.time.get_ticks()
+                                                alert_cant_numbers.mostrar_alerta = True 
                                         else:
-                                            alert_repeat_number.tiempo_mostrado = pygame.time.get_ticks()
-                                            alert_repeat_number.mostrar_alerta = True 
+                                            alert_negative_number.tiempo_mostrado = pygame.time.get_ticks()
+                                            alert_negative_number.mostrar_alerta = True
                                     else:
                                         alert_cant_ivalid.tiempo_mostrado = pygame.time.get_ticks()
                                         alert_cant_ivalid.mostrar_alerta = True 
@@ -180,10 +188,12 @@ class InterfazBinary:
                 numbers_nodes.handle_event(event)
                 values.handle_event(event)
                 value_root.handle_event(event)
+                value_node_delete.handle_event(event)
 
             numbers_nodes.update()
             values.update()
             value_root.update()
+            value_node_delete.update()
 
             self.screen.blit(fondo, (0,0))
             pygame.draw.rect(self.screen, self.WHITE, pygame.Rect(0, screen_height-25, screen_width, 25))
@@ -193,6 +203,7 @@ class InterfazBinary:
             numbers_nodes.draw(self.screen)
             values.draw(self.screen)
             value_root.draw(self.screen)
+            value_node_delete.draw(self.screen)
 
             text_tittle.draw(self.screen)
             text1.draw(self.screen)
@@ -201,9 +212,11 @@ class InterfazBinary:
             text_profundidad.draw(self.screen)
             text_amplitude.draw(self.screen)
             text_recorrido.draw(self.screen)
+            text_value_delete.draw(self.screen)
 
             button_create_binary_tree.draw(self.screen)
             button_home.draw(self.screen)
+            button_delete_node.draw(self.screen)
 
             self.draw_tree(self.binary_treee.root, 900, 50, 1, 800 // 2, 15)
             checkbox_preorden.draw(self.screen)
@@ -266,3 +279,15 @@ class InterfazBinary:
                 next_y = y + 100
                 self.draw_arrow_line(self.screen, self.BLACK, (x, y + 20), ((x + width // 2)-aux, next_y-18), 10)
                 self.draw_tree(node.right, x + width // 2, next_y, level + 1, width // 2, aux-2)
+
+    def eliminar_repetidos(self, lista):
+        lista_sin_repetidos = []
+        for elemento in lista:
+            if elemento not in lista_sin_repetidos:
+                lista_sin_repetidos.append(elemento)
+        return lista_sin_repetidos
+    
+    def verificar_repetidos(self, lista, root):
+        for i in lista:
+            if i == root:
+                return True

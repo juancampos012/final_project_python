@@ -32,47 +32,43 @@ class NaryTree:
                 return True
         else:
             return False
+        
+    def eliminar_nodo(self, value):
+        aux = self.eliminar_nodo_sin_hijos(self.root, value)
+        if aux == True:
+            return True
+        else:
+            return False
 
-    def buscar_nodo_sin_hijos(self, root, value):
-        # Verificar si la raíz es None o si el valor coincide
+    def eliminar_nodo_sin_hijos(self, root, value):
         if root is None:
             return None
         if root.value == value:
-            # Verificar si la raíz no tiene hijos
             if not root.children:
                 return root
-        # Buscar en los hijos recursivamente
+        for hijo in root.children:
+            current_node = self.buscar_nodo_sin_hijos(hijo, value)
+            if current_node is not None:
+                current_node.value = None
+                return True
+        return False
+
+    def buscar_nodo_sin_hijos(self, root, value):
+        if root is None:
+            return None
+        if root.value == value:
+            if not root.children:
+                return root
         for hijo in root.children:
             resultado = self.buscar_nodo_sin_hijos(hijo, value)
             if resultado is not None:
                 return resultado
-        # Si no se encuentra el valor en el subárbol
         return None
-
-    def preorder(self, node=None):
-        if node is None:
-            node = self.root
-
-        result = [node.value] 
-        for child in node.children:
-            result.extend(self.preorder(child))
-
-        return result
-
-    def postorder(self, node=None):
-        if node is None:
-            node = self.root
-
-        result = []
-        for child in node.children:
-            result.extend(self.postorder(child))
-        result.append(node.value)
-
-        return result
     
     def delete_nary_tree(self):
         self.delete_nary_tree_recursive(self.root)
         self.root = None
+        self.length = 0
 
     def delete_nary_tree_recursive(self, node):
         if node is not None:

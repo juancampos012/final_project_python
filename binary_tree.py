@@ -11,10 +11,8 @@ class BinaryTree:
     def insert(self, value):
         if self.root == None:
             self.root = Node(value)
-        elif self.contains(value) is False:
-            self.insert_recursive(self.root, value)
         else:
-            return True
+            self.insert_recursive(self.root, value)
     
     def insert_recursive(self, node, value):
         if value < node.value:
@@ -113,6 +111,9 @@ class BinaryTree:
             result.append(node.value)
             self._preorder_recursive(node.left, result)
             self._preorder_recursive(node.right, result)
+
+    def delete_node_recursive(self, value):
+        self.delete_node(self.root, value)
     
     def delete_node(self, root, value):
         if root is None:
@@ -121,7 +122,7 @@ class BinaryTree:
             root.left = self.delete_node(root.left, value)
         elif value > root.value:
             root.right = self.delete_node(root.right, value)
-        else:
+        elif value == root.value:
             if root.left is None:
                 temp = root.right
                 root = None
