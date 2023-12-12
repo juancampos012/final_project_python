@@ -4,6 +4,7 @@ from button import Button
 from text import Text
 from interfaz_binary import InterfazBinary
 from interfaz_nary import InterfazNary
+from interfaz_dijkstra import InterfazDijkstra
 
 class Interfaz:
     def __init__(self):
@@ -11,6 +12,7 @@ class Interfaz:
         self.screen = pygame.display.set_mode((1350, 800))
         self.nary = InterfazNary()
         self.binary = InterfazBinary()
+        self.dijkstra = InterfazDijkstra()
 
     def principal(self):
         screen_width = 1350
@@ -34,7 +36,7 @@ class Interfaz:
         button_grafos = Button(button_x, 430, 'images/buttonf.jpeg', 'grafos', 40, WHITE, (220,220,220))
         button_dijkstra = Button(button_x, 480, 'images/buttonf.jpeg', 'Dijkstra', 40, WHITE, (220,220,220))
         font_tittle = pygame.font.Font(None,50)
-        text_tittle = Text(520, 60, 'Menu de opciones.', font_tittle, BLACK)
+        text_tittle = Text(530, 60, 'Menu de opciones.', font_tittle, BLACK)
 
         active_desplegable_tree = False
         active_desplegable_grafo = False
@@ -78,4 +80,6 @@ class Interfaz:
                     self.nary.nario_tree()
             elif active_desplegable_grafo is True:
                 button_dijkstra.draw(self.screen)
+                if button_dijkstra.is_clicked():
+                    self.dijkstra.options_dijkstra()
             pygame.display.update()

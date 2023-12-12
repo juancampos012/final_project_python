@@ -22,3 +22,6 @@ class Text:
         text_rect = self.rendered_text.get_rect()
         text_rect.topleft = (self.x, self.y)
         return text_rect.collidepoint(pos)
+    
+    def get_text_size(self):
+        return self.rendered_text.get_size()
